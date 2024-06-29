@@ -1,9 +1,9 @@
 import { useQuery } from "react-query";
 import { API_BASE_URL, axiosTokenInterceptor } from "../shared/apiConfig";
 
-const getVetCatalog = async () => {
+const getPetCatalog = async () => {
   const response = await axiosTokenInterceptor(
-    `${API_BASE_URL}/VeterinarioCatalogo`,
+    `${API_BASE_URL}/MascotaCatalogo`,
     {
       method: "GET",
       headers: {
@@ -14,8 +14,8 @@ const getVetCatalog = async () => {
   return response;
 };
 
-export const useGetVetCatalog = () => {
-  return useQuery(["getVetCatalogs"], () => getVetCatalog(), {
+export const useGetPetCatalog = () => {
+  return useQuery(["getPetCatalogs"], () => getPetCatalog(), {
     staleTime: 1000 * 60 * 5, // 5 minutes
     cacheTime: 1000 * 60 * 10, // 10 minutes
     onSuccess: (data) => {

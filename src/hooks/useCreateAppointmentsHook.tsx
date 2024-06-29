@@ -3,8 +3,11 @@ import { useCreateAppointments } from "../services/createAppointments.service";
 import { IAppointmentsRequest } from "../interfaces/IAppointmentsRequest.interface";
 
 const useCreateAppointmentsHook = () => {
-  const { mutate: mutateCreateAppointments, data: dataCreatedAppointments } =
-    useCreateAppointments();
+  const {
+    mutate: mutateCreateAppointments,
+    data: dataCreatedAppointments,
+    isLoading,
+  } = useCreateAppointments();
 
   const initialValues: IAppointmentsRequest = {
     FechaHora: "",
@@ -34,6 +37,7 @@ const useCreateAppointmentsHook = () => {
   return {
     formik,
     dataCreatedAppointments,
+    isLoading,
   };
 };
 

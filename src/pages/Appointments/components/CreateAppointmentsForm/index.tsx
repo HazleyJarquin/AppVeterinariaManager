@@ -3,25 +3,31 @@ import { FormikProps } from "formik";
 import { IAppointmentsRequest } from "../../../../interfaces/IAppointmentsRequest.interface";
 
 import { ChangeEvent } from "react";
-import { ICatalogVet } from "../../../../interfaces";
+import { ICatalogPet, ICatalogVet } from "../../../../interfaces";
 
 interface Props {
   formik: FormikProps<IAppointmentsRequest>;
-
+  petCatalogData: ICatalogPet[];
   dataVeterinarios: ICatalogVet[];
   refetchData: () => void;
   onclose: () => void;
+  isLoading: boolean;
 }
 export const CreateAppointmentsForm = ({
   formik,
-
+  petCatalogData,
   refetchData,
   dataVeterinarios,
   onclose,
+  isLoading,
 }: Props) => {
   const handleVeterinarioChange = (event: ChangeEvent<HTMLSelectElement>) => {
     const selectedVeterinarioID = event.target.value;
     formik.setFieldValue("VeterinarioID", selectedVeterinarioID);
+  };
+  const handleMascotaChange = (event: ChangeEvent<HTMLSelectElement>) => {
+    const selectedMascotaID = event.target.value;
+    formik.setFieldValue("MascotaID", selectedMascotaID);
   };
 
   return (
@@ -54,14 +60,22 @@ export const CreateAppointmentsForm = ({
         name="FechaHora"
       />
       <FormLabel>Mascota ID</FormLabel>
-      <Input
-        placeholder="Mascota ID"
-        value={formik.values.MascotaID}
-        onChange={formik.handleChange}
-        name="MascotaID"
-      />
+      <Select placeholder="Seleccion su mascota" onChange={handleMascotaChange}>
+        {petCatalogData?.map((mascota: ICatalogPet) => {
+          return (
+            <option key={mascota.MascotaID} value={mascota.MascotaID}>
+              {mascota.NombreMascota}
+            </option>
+          );
+        })}
+      </Select>
+
       <Button
         mt={4}
+        background={"#35b68f"}
+        color={"white"}
+        _hover={{ background: "#e1403f" }}
+        isLoading={isLoading}
         onClick={() => {
           formik.handleSubmit();
           setTimeout(() => {

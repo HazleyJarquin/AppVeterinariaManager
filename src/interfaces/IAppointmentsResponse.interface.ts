@@ -5,6 +5,7 @@ export interface IAppointmentsResponse {
   Mascota: Mascota;
   Cliente: Cliente;
   Veterinario: Veterinario;
+  Activa: number;
 }
 
 export interface Mascota {
