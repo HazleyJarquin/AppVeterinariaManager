@@ -1,4 +1,4 @@
-import { AddIcon, ArrowLeftIcon, ArrowRightIcon } from "@chakra-ui/icons";
+import { AddIcon, ChevronLeftIcon, ChevronRightIcon } from "@chakra-ui/icons";
 import { Button, Heading } from "@chakra-ui/react";
 import {
   CellContext,
@@ -27,6 +27,8 @@ type DataTableProps = {
   pageSize?: number;
   tableTitle: string;
   onClickButtonAdd: () => void;
+  isButton: boolean;
+  titleButton: string;
 };
 
 const columnHelper = createColumnHelper<any>();
@@ -39,6 +41,8 @@ export const DataTable: React.FC<DataTableProps> = ({
   pageSize = 10,
   tableTitle,
   onClickButtonAdd,
+  isButton,
+  titleButton,
 }) => {
   const table = useReactTable({
     data,
@@ -70,6 +74,7 @@ export const DataTable: React.FC<DataTableProps> = ({
           background: "white",
           borderRadius: "8px",
           width: "100%",
+          height: "450px",
           padding: "10px",
         }}
       >
@@ -81,13 +86,15 @@ export const DataTable: React.FC<DataTableProps> = ({
           }}
         >
           <Heading size={"lg"}>{tableTitle}</Heading>
-          <Button
-            leftIcon={<AddIcon />}
-            fontSize={"md"}
-            onClick={onClickButtonAdd}
-          >
-            Nueva cita
-          </Button>
+          {isButton && (
+            <Button
+              leftIcon={<AddIcon />}
+              fontSize={"md"}
+              onClick={onClickButtonAdd}
+            >
+              {titleButton}
+            </Button>
+          )}
         </div>
         <table>
           <thead style={{ borderBottom: "1px solid gray" }}>
@@ -161,7 +168,10 @@ export const DataTable: React.FC<DataTableProps> = ({
           }}
         >
           <Button
-            leftIcon={<ArrowLeftIcon />}
+            variant={"outline"}
+            color={"black"}
+            _hover={{ background: "none" }}
+            leftIcon={<ChevronLeftIcon />}
             onClick={() => table.previousPage()}
             isDisabled={!table.getCanPreviousPage()}
           >
@@ -172,7 +182,10 @@ export const DataTable: React.FC<DataTableProps> = ({
             {table.getPageCount().toLocaleString()}
           </span>
           <Button
-            rightIcon={<ArrowRightIcon />}
+            variant={"outline"}
+            color={"black"}
+            _hover={{ background: "none" }}
+            rightIcon={<ChevronRightIcon />}
             onClick={() => table.nextPage()}
             isDisabled={!table.getCanNextPage()}
           >

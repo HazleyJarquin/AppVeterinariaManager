@@ -1,7 +1,6 @@
 import { Box } from "@chakra-ui/react";
 import { Outlet } from "react-router-dom";
 import { Navbar } from "../Navbar";
-import bg from "../../assets/Images/MainWallpaper.png";
 
 const Mainlayout = () => {
   return (
@@ -10,7 +9,8 @@ const Mainlayout = () => {
       height={"100vh"}
       display={"flex"}
       flexDirection={"column"}
-      backgroundImage={`url(${bg})`}
+      // backgroundImage={`linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url(${bg})`}
+      background={"white"}
       backgroundSize={"cover"}
       backgroundPosition={"center"}
     >
@@ -19,7 +19,7 @@ const Mainlayout = () => {
         w={"100%"}
         h={"90vh"}
         overflow={"auto"}
-        padding={"20px 20px 0px 20px"}
+        // padding={"20px 20px 0px 20px"}
       >
         <Outlet />
       </Box>

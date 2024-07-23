@@ -11,7 +11,7 @@ import {
   useToast,
 } from "@chakra-ui/react";
 import { useLoginForm } from "../../hooks/useLoginForm";
-import bgMain from "../../assets/Images/MainWallpaper.png";
+import bg from "../../assets/Images/dogWallpaper.jpg";
 import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { WarningIcon } from "../../components/WarningIcon";
@@ -47,17 +47,18 @@ const Login = () => {
       w={"100%"}
       height={"100vh"}
       display={"flex"}
-      backgroundImage={`url(${bgMain})`}
+      backgroundImage={`linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url(${bg})`}
       backgroundSize={"cover"}
-      justifyContent={"center"}
+      justifyContent={"end"}
       alignItems={"center"}
+      padding={"0 20px"}
     >
       <Box
         w={"30%"}
         rounded={"md"}
         border={"1px solid #ffffff"}
         backdropFilter={"blur(10px)"}
-        color={"#34b68d"}
+        color={"#ffffff"}
         p={10}
         display={"flex"}
         flexDirection={"column"}
@@ -67,7 +68,7 @@ const Login = () => {
         <Heading>
           <Highlight
             query="Cat"
-            styles={{ color: "#ffffff", background: "#34b68d" }}
+            styles={{ color: "#ffffff", background: "#0c2130" }}
           >
             DogCat
           </Highlight>

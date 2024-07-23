@@ -8,16 +8,22 @@ import {
   useDisclosure,
 } from "@chakra-ui/react";
 import { DataTable } from "../../components/DataTable";
-import { IUsersResponse } from "../../interfaces";
-import { useGetUserList } from "../../services/getAllUser.service";
-import { CreateUsersForm } from "./components/CreateUsersForm";
-import useCreateUsersHook from "../../hooks/useCreateUsers";
 
-export const Users = () => {
-  const { data: userData, isLoading, refetch } = useGetUserList();
+import { useGetClientList } from "../../services/getAllClients.service";
+import { IClientsResponse } from "../../interfaces";
 
-  const { formik, isLoading: isLoadingCreateUsers } = useCreateUsersHook();
-  const { isOpen, onOpen, onClose } = useDisclosure();
+import { CreateClientsForm } from "./components/CreateClientsForm";
+import useCreateClientsHook from "../../hooks/useCreateClientsHook";
+
+export const Clients = () => {
+  const { isOpen, onClose, onOpen } = useDisclosure();
+  const { formik, isLoading: isLoadingCreateClients } = useCreateClientsHook();
+
+  const {
+    data: clientData,
+    isLoading,
+    refetch: clientListRefetch,
+  } = useGetClientList();
 
   const columns = [
     {
@@ -33,8 +39,8 @@ export const Users = () => {
       accessor: "nombre",
     },
     {
-      Header: "Rol",
-      accessor: "rol",
+      Header: "Direccion",
+      accessor: "dir",
     },
     {
       Header: "Correo",
@@ -43,13 +49,13 @@ export const Users = () => {
   ];
 
   const data =
-    userData?.map((user: IUsersResponse) => {
+    clientData?.map((user: IClientsResponse) => {
       return {
-        id: user.UsuarioID,
-        username: user.NombreUsuario,
+        id: user.ClienteID,
+        username: user.Nombre,
         nombre: `${user.Nombre} ${user.Apellido}`,
+        dir: user.Direccion,
         correo: user.Correo,
-        rol: user.Rol.RoleName,
       };
     }) || [];
   return (
@@ -57,27 +63,26 @@ export const Users = () => {
       <Drawer placement={"left"} onClose={onClose} isOpen={isOpen}>
         <DrawerOverlay />
         <DrawerContent>
-          <DrawerHeader borderBottomWidth="1px">Agregar Usuario</DrawerHeader>
+          <DrawerHeader borderBottomWidth="1px">Agregar Cliente</DrawerHeader>
           <DrawerBody>
-            <CreateUsersForm
-              isLoading={isLoadingCreateUsers}
+            <CreateClientsForm
+              isLoading={isLoadingCreateClients}
               onclose={onClose}
-              refetchData={refetch}
+              refetchData={clientListRefetch}
               formik={formik}
             />
           </DrawerBody>
         </DrawerContent>
       </Drawer>
-
       <Box width={"100%"}>
         <DataTable
           isButton
           onClickButtonAdd={onOpen}
-          titleButton="Agregar Usuario"
+          titleButton="Agregar Cliente"
           pageSize={5}
           paginated
           paginatedPosition="center"
-          tableTitle="Usuarios"
+          tableTitle="Clientes"
           columns={columns}
           data={data}
           loading={isLoading}

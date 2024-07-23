@@ -1,8 +1,8 @@
 import { useQuery } from "react-query";
 import { API_BASE_URL, axiosTokenInterceptor } from "../shared/apiConfig";
 
-const getUserList = async () => {
-  const response = await axiosTokenInterceptor(`${API_BASE_URL}/Usuario`, {
+const getClientList = async () => {
+  const response = await axiosTokenInterceptor(`${API_BASE_URL}/clientes`, {
     method: "GET",
     headers: {
       "Content-Type": "application/json",
@@ -10,11 +10,10 @@ const getUserList = async () => {
   });
   return response;
 };
-export const useGetUserList = () => {
-  return useQuery(["getUserList"], {
-    // keepPreviousData: true,
+export const useGetClientList = () => {
+  return useQuery(["getClientList"], {
     async queryFn() {
-      return getUserList();
+      return getClientList();
     },
   });
 };

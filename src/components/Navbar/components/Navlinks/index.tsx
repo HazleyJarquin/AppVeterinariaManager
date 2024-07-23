@@ -1,30 +1,48 @@
 import { Box, Button } from "@chakra-ui/react";
+import { useAuthToken } from "../../../../store/useAuthToken.store";
 
 interface Props {
   navigate: (path: string) => void;
 }
 
 export const Navlinks = ({ navigate }: Props) => {
+  const { tokenDecoded } = useAuthToken();
   const links = [
     {
       id: 1,
       name: "Inicio",
       path: "/home",
+      restricted: "Veterinario",
     },
     {
       id: 2,
       name: "Agendar Citas",
       path: "/appointments",
+      restricted: "Veterinario",
     },
     {
       id: 3,
-      name: "Medicamentos",
-      path: "/medicines",
+      name: "Clientes",
+      path: "/clients",
+      restricted: "Administrador",
+    },
+    {
+      id: 4,
+      name: "Usuarios",
+      path: "/users",
+      restricted: "Administrador",
     },
   ];
+
+  const filteredLinks = links.filter((link) => {
+    if (link.restricted) {
+      return tokenDecoded?.role === link.restricted;
+    }
+    return true;
+  });
   return (
     <Box>
-      {links.map((link, index) => (
+      {filteredLinks.map((link, index) => (
         <Button
           key={link.id + index}
           variant="ghost"
@@ -32,7 +50,7 @@ export const Navlinks = ({ navigate }: Props) => {
           onClick={() => navigate(link.path)}
           marginRight={"10px"}
           borderRadius={"none"}
-          color={"#0c313f"}
+          color={"#35b68f"}
           _hover={{
             backgroundColor: "none",
             color: "#35b68f",

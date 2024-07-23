@@ -42,19 +42,18 @@ export const Navbar = () => {
         <Button
           variant={"outline"}
           leftIcon={<ArrowBackIcon />}
-          borderColor={"#0c313f"}
-          color={"#0c313f"}
+          borderColor={"#35b68f"}
+          color={"#35b68f"}
           onClick={() => {
             setToken("");
             navigate("/login");
           }}
           _hover={{
             backgroundColor: "none",
-            color: "white",
-            borderColor: "white",
+            color: "#35b68f",
           }}
         >
-          Exit
+          Salir
         </Button>
       </Box>
     </Box>
