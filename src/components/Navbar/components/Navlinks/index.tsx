@@ -50,17 +50,17 @@ export const Navlinks = ({ navigate }: Props) => {
           onClick={() => navigate(link.path)}
           marginRight={"10px"}
           borderRadius={"none"}
-          color={"#35b68f"}
+          color={"#000"}
           _hover={{
             backgroundColor: "none",
-            color: "#35b68f",
+            color: "#FD7E14",
 
-            borderBottom: "2px solid #35b68f",
+            borderBottom: "2px solid #FD7E14",
           }}
           _focus={{
-            color: "#35b68f",
+            color: "#FD7E14",
 
-            borderBottom: "2px solid #35b68f",
+            borderBottom: "2px solid #FD7E14",
           }}
         >
           {link.name}

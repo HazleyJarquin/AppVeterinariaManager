@@ -14,7 +14,17 @@ const Mainlayout = () => {
       backgroundSize={"cover"}
       backgroundPosition={"center"}
     >
-      <Navbar />
+      <div
+        style={{
+          width: "100%",
+          display: "flex",
+          // background: "red",
+          justifyContent: "center",
+          padding: "1rem",
+        }}
+      >
+        <Navbar />
+      </div>
       <Box
         w={"100%"}
         h={"90vh"}

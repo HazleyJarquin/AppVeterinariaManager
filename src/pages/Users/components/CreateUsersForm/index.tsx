@@ -14,7 +14,6 @@ import { IUsersRequest } from "../../../../interfaces";
 
 interface Props {
   formik: FormikProps<IUsersRequest>;
-
   refetchData: () => void;
   onclose: () => void;
   isLoading: boolean;

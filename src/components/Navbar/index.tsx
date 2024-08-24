@@ -10,29 +10,18 @@ export const Navbar = () => {
 
   return (
     <Box
-      width={"100%"}
-      height={{ base: "auto", md: "10vh" }}
+      width={"80%"}
       display={"flex"}
       flexDirection={{ base: "column", md: "row" }}
       justifyContent={"space-between"}
       alignItems={"center"}
-      pr={4}
-      pt={10}
+      p={"1rem"}
+      boxSizing={"border-box"}
+      boxShadow={"md"}
+      backgroundColor={"#ffff"}
+      borderRadius={"20px"}
     >
-      <Box
-        backgroundColor={"#35b68f"}
-        w={"20%"}
-        borderTopRightRadius={"20px"}
-        borderBottomRightRadius={"20px"}
-        onClick={() => navigate("/home")}
-        color={"#feede5"}
-        cursor={"pointer"}
-        display={"flex"}
-        p={1}
-        justifyContent={"center"}
-      >
-        <Heading>DogCat</Heading>
-      </Box>
+      <Heading pointerEvents={"none"}>DogCat</Heading>
 
       <Box>
         <Navlinks navigate={navigate} />
@@ -42,15 +31,16 @@ export const Navbar = () => {
         <Button
           variant={"outline"}
           leftIcon={<ArrowBackIcon />}
-          borderColor={"#35b68f"}
-          color={"#35b68f"}
+          borderColor={"#000"}
+          color={"#000"}
           onClick={() => {
             setToken("");
             navigate("/login");
           }}
           _hover={{
             backgroundColor: "none",
-            color: "#35b68f",
+            borderColor: "#FD7E14",
+            color: "#FD7E14",
           }}
         >
           Salir

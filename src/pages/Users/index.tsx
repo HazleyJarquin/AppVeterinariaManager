@@ -54,21 +54,22 @@ export const Users = () => {
     }) || [];
   return (
     <Box w={"100%"} mt={"20px"} display={"flex"} flexDirection={"column"}>
-      <Drawer placement={"left"} onClose={onClose} isOpen={isOpen}>
-        <DrawerOverlay />
-        <DrawerContent>
-          <DrawerHeader borderBottomWidth="1px">Agregar Usuario</DrawerHeader>
-          <DrawerBody>
-            <CreateUsersForm
-              isLoading={isLoadingCreateUsers}
-              onclose={onClose}
-              refetchData={refetch}
-              formik={formik}
-            />
-          </DrawerBody>
-        </DrawerContent>
-      </Drawer>
-
+      {isOpen && (
+        <Drawer placement={"left"} onClose={onClose} isOpen={isOpen}>
+          <DrawerOverlay />
+          <DrawerContent>
+            <DrawerHeader borderBottomWidth="1px">Agregar Usuario</DrawerHeader>
+            <DrawerBody>
+              <CreateUsersForm
+                isLoading={isLoadingCreateUsers}
+                onclose={onClose}
+                refetchData={refetch}
+                formik={formik}
+              />
+            </DrawerBody>
+          </DrawerContent>
+        </Drawer>
+      )}
       <Box width={"100%"}>
         <DataTable
           isButton
