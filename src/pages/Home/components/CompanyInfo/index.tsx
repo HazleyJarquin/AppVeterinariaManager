@@ -1,7 +1,12 @@
+import { useNavigate } from "react-router-dom";
 import BirdRender from "../../../../assets/Images/BirdRender.png";
 import { Box, Button, Heading, Image, Text } from "@chakra-ui/react";
 
 export const CompanyInfo = () => {
+  const navigate = useNavigate();
+  const handleNavigate = () => {
+    navigate("/appointments");
+  };
   return (
     <Box
       display={"flex"}
@@ -47,6 +52,7 @@ export const CompanyInfo = () => {
             background={"#090706"}
             color={"#ffff"}
             _hover={{ background: "#FD7E14", color: "#ffff" }}
+            onClick={handleNavigate}
           >
             Agendar Citas
           </Button>

@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { Navlinks } from "./components/Navlinks";
 import { useAuthToken } from "../../store/useAuthToken.store";
 import { ArrowBackIcon } from "@chakra-ui/icons";
+import { PawPrint } from "lucide-react";
 
 export const Navbar = () => {
   const navigate = useNavigate();
@@ -21,7 +22,10 @@ export const Navbar = () => {
       backgroundColor={"#ffff"}
       borderRadius={"20px"}
     >
-      <Heading pointerEvents={"none"}>DogCat</Heading>
+      <Box display={"flex"} gap={"0.2rem"} alignItems={"center"}>
+        <PawPrint color="#FD7E14" size={"30px"} />
+        <Heading pointerEvents={"none"}>DogCat</Heading>
+      </Box>
 
       <Box>
         <Navlinks navigate={navigate} />

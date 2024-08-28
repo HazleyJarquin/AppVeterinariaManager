@@ -7,23 +7,29 @@ import {
   Input,
   InputGroup,
   InputLeftElement,
+  InputRightElement,
   useColorMode,
   useToast,
 } from "@chakra-ui/react";
-import bg from "../../assets/Images/dogWallpaper.jpg";
 import { useLoginForm } from "../../hooks/useLoginForm";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { WarningIcon } from "../../components/WarningIcon";
 import { useAuthToken } from "../../store/useAuthToken.store";
 import { EmailIcon, LockIcon } from "@chakra-ui/icons";
+import { PawPrint } from "lucide-react";
 
 const Login = () => {
+  const [show, setShow] = useState(false);
   const { colorMode } = useColorMode();
   const { formik, data, isError, isLoading, isSuccess, error } = useLoginForm();
   const { setToken } = useAuthToken();
   const navigate = useNavigate();
   const toast = useToast();
+
+  const handleClick = () => {
+    setShow(!show);
+  };
 
   useEffect(() => {
     if (isSuccess && data?.Token) {
@@ -47,32 +53,33 @@ const Login = () => {
       w={"100%"}
       height={"100vh"}
       display={"flex"}
-      backgroundImage={`linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url(${bg})`}
-      backgroundSize={"cover"}
-      justifyContent={"end"}
+      backgroundColor={"#f3f4f6"}
+      justifyContent={"center"}
       alignItems={"center"}
-      padding={"0 20px"}
     >
       <Box
-        w={"30%"}
+        w={"25%"}
         rounded={"md"}
         border={"1px solid #ffffff"}
-        backdropFilter={"blur(10px)"}
-        color={"#ffffff"}
+        color={"#000"}
+        background={"#ffffff"}
         p={10}
         display={"flex"}
         flexDirection={"column"}
         justifyContent={"center"}
         gap={"20px"}
       >
-        <Heading>
-          <Highlight
-            query="Cat"
-            styles={{ color: "#ffffff", background: "#0c2130" }}
-          >
-            DogCat
-          </Highlight>
-        </Heading>
+        <Box display={"flex"} gap={"0.2rem"} alignItems={"center"}>
+          <PawPrint color="#FD7E14" size={"30px"} />
+          <Heading>
+            <Highlight
+              query="Cat"
+              styles={{ color: "#ffffff", background: "#FD7E14" }}
+            >
+              DogCat
+            </Highlight>
+          </Heading>
+        </Box>
 
         <Box>
           <Box width={"100%"} display={"flex"} gap={2}>
@@ -87,7 +94,7 @@ const Login = () => {
             </InputLeftElement>
             <Input
               variant={"flushed"}
-              placeholder="test@test.com"
+              placeholder="example@email.com"
               _placeholder={{
                 color: colorMode === "light" ? "light" : "black",
                 opacity: "0.5",
@@ -125,7 +132,7 @@ const Login = () => {
               }}
               placeholder="******"
               variant={"flushed"}
-              type="password"
+              type={show ? "text" : "password"}
               onBlur={(event) => {
                 if (event.target instanceof HTMLInputElement) {
                   formik.setFieldValue("Password", event.target.value);
@@ -138,11 +145,16 @@ const Login = () => {
                 formik.validateField("Password");
               }}
             />
+            <InputRightElement width="4.5rem">
+              <Button h="1.75rem" size="sm" onClick={handleClick}>
+                {show ? "Hide" : "Show"}
+              </Button>
+            </InputRightElement>
           </InputGroup>
         </Box>
 
         <Button
-          background={"#35b68f"}
+          background={"#FD7E14"}
           color={"white"}
           _hover={{ background: "#e1403f" }}
           onClick={() => formik.handleSubmit()}
