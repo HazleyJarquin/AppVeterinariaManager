@@ -17,10 +17,16 @@ import { useNavigate } from "react-router-dom";
 import { WarningIcon } from "../../components/WarningIcon";
 import { useAuthToken } from "../../store/useAuthToken.store";
 import { EmailIcon, LockIcon } from "@chakra-ui/icons";
-import { PawPrint } from "lucide-react";
+import { EyeIcon, EyeOffIcon, PawPrint } from "lucide-react";
+import { useAttempts } from "../../store/useAttempts.store";
+// import { DarkModeButtons } from "../../components/DarkModeButtons";
+
+const MAX_ATTEMPTS = 3;
 
 const Login = () => {
   const [show, setShow] = useState(false);
+  const { attempts, setAttempts, isLocked, setIsLocked } = useAttempts();
+  const [attemptsNumbers, setAttemptsNumbers] = useState(2);
   const { colorMode } = useColorMode();
   const { formik, data, isError, isLoading, isSuccess, error } = useLoginForm();
   const { setToken } = useAuthToken();
@@ -31,13 +37,34 @@ const Login = () => {
     setShow(!show);
   };
 
+  const onKeyPress = (event: React.KeyboardEvent<HTMLInputElement>) => {
+    if (event.key === "Enter") {
+      formik.handleSubmit();
+    }
+  };
+
   useEffect(() => {
     if (isSuccess && data?.Token) {
       setToken(data?.Token);
       navigate("/home");
-    } else if (isError) {
+      setAttempts(0);
+      setIsLocked(false);
+    } else if (isError && !isLocked) {
       const errorMessage =
-        error?.response?.data?.Message || "An error occurred";
+        `${error?.response?.data?.Message}, tienes ${attemptsNumbers} intento(s)` ||
+        "An error occurred";
+
+      setAttempts((prevAttempts) => {
+        const newAttempts = prevAttempts + 1;
+        setAttemptsNumbers(attemptsNumbers - 1);
+
+        if (newAttempts >= MAX_ATTEMPTS) {
+          setIsLocked(true);
+        }
+
+        return newAttempts;
+      });
+
       toast({
         title: "Error",
         description: errorMessage,
@@ -46,7 +73,38 @@ const Login = () => {
         isClosable: true,
       });
     }
-  }, [isSuccess, data, isError, error, setToken, navigate, toast]);
+  }, [isSuccess, data, isError, error, setToken, navigate, toast, isLocked]);
+
+  if (isLocked) {
+    return (
+      <Box
+        w={"100%"}
+        height={"100vh"}
+        display={"flex"}
+        backgroundColor={"#f3f4f6"}
+        justifyContent={"center"}
+        alignItems={"center"}
+      >
+        <Box
+          w={"25%"}
+          rounded={"md"}
+          border={"1px solid #ffffff"}
+          color={"#000"}
+          background={"#ffffff"}
+          p={10}
+          display={"flex"}
+          flexDirection={"column"}
+          justifyContent={"center"}
+          alignItems={"center"}
+        >
+          <Heading color={"#FD7E14"}>Usuario bloqueado</Heading>
+          <Box mt={4}>
+            Habla con un administrador para desbloquear tu cuenta.
+          </Box>
+        </Box>
+      </Box>
+    );
+  }
 
   return (
     <Box
@@ -79,6 +137,7 @@ const Login = () => {
               DogCat
             </Highlight>
           </Heading>
+          {/* <DarkModeButtons /> */}
         </Box>
 
         <Box>
@@ -133,6 +192,7 @@ const Login = () => {
               placeholder="******"
               variant={"flushed"}
               type={show ? "text" : "password"}
+              onKeyDown={onKeyPress}
               onBlur={(event) => {
                 if (event.target instanceof HTMLInputElement) {
                   formik.setFieldValue("Password", event.target.value);
@@ -146,8 +206,14 @@ const Login = () => {
               }}
             />
             <InputRightElement width="4.5rem">
-              <Button h="1.75rem" size="sm" onClick={handleClick}>
-                {show ? "Hide" : "Show"}
+              <Button
+                background={"transparent"}
+                _hover={{ background: "transparent" }}
+                h="1.75rem"
+                size="sm"
+                onClick={handleClick}
+              >
+                {show ? <EyeOffIcon /> : <EyeIcon />}
               </Button>
             </InputRightElement>
           </InputGroup>
@@ -159,8 +225,9 @@ const Login = () => {
           _hover={{ background: "#e1403f" }}
           onClick={() => formik.handleSubmit()}
           isLoading={isLoading}
+          isDisabled={attempts >= MAX_ATTEMPTS}
         >
-          Iniciar Sesion
+          Iniciar Sesión
         </Button>
       </Box>
     </Box>

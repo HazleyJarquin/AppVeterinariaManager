@@ -4,6 +4,7 @@ import { IAppointmentsRequest } from "../../../../interfaces/IAppointmentsReques
 
 import { ChangeEvent } from "react";
 import { ICatalogPet, ICatalogVet } from "../../../../interfaces";
+import { WarningIcon } from "../../../../components/WarningIcon";
 
 interface Props {
   formik: FormikProps<IAppointmentsRequest>;
@@ -32,8 +33,28 @@ export const CreateAppointmentsForm = ({
 
   return (
     <Box display={"flex"} flexDirection={"column"}>
-      <FormLabel>Veterinario</FormLabel>
-      <Select placeholder="Veterinarios" onChange={handleVeterinarioChange}>
+      <Box
+        display={"flex"}
+        alignItems={"center"}
+        justifyContent={"space-between"}
+      >
+        <FormLabel>Veterinario</FormLabel>
+        {formik.errors.VeterinarioID && formik.touched.VeterinarioID ? (
+          <WarningIcon message={formik.errors.VeterinarioID} />
+        ) : null}
+      </Box>
+
+      <Select
+        onBlur={(event) => {
+          if (event.target instanceof HTMLInputElement) {
+            formik.setFieldValue("VeterinarioID", event.target.value);
+          }
+
+          formik.handleBlur("VeterinarioID")(event);
+        }}
+        placeholder="Veterinarios"
+        onChange={handleVeterinarioChange}
+      >
         {dataVeterinarios?.map((veterinario: ICatalogVet) => {
           return (
             <option
@@ -45,22 +66,74 @@ export const CreateAppointmentsForm = ({
           );
         })}
       </Select>
-      <FormLabel>Motivo</FormLabel>
+      <Box
+        display={"flex"}
+        alignItems={"center"}
+        justifyContent={"space-between"}
+      >
+        <FormLabel>Motivo</FormLabel>
+        {formik.errors.Motivo && formik.touched.Motivo ? (
+          <WarningIcon message={formik.errors.Motivo} />
+        ) : null}
+      </Box>
       <Input
         placeholder="Motivo"
         value={formik.values.Motivo}
         onChange={formik.handleChange}
         name="Motivo"
+        onBlur={(event) => {
+          if (event.target instanceof HTMLInputElement) {
+            formik.setFieldValue("Motivo", event.target.value);
+          }
+
+          formik.handleBlur("Motivo")(event);
+        }}
       />
-      <FormLabel>Fecha y Hora</FormLabel>
+
+      <Box
+        display={"flex"}
+        alignItems={"center"}
+        justifyContent={"space-between"}
+      >
+        <FormLabel>Fecha y Hora</FormLabel>
+        {formik.errors.FechaHora && formik.touched.FechaHora ? (
+          <WarningIcon message={formik.errors.FechaHora} />
+        ) : null}
+      </Box>
       <Input
         type="datetime-local"
         value={formik.values.FechaHora}
         onChange={formik.handleChange}
         name="FechaHora"
+        onBlur={(event) => {
+          if (event.target instanceof HTMLInputElement) {
+            formik.setFieldValue("FechaHora", event.target.value);
+          }
+
+          formik.handleBlur("FechaHora")(event);
+        }}
       />
-      <FormLabel>Mascota ID</FormLabel>
-      <Select placeholder="Seleccion su mascota" onChange={handleMascotaChange}>
+      <Box
+        display={"flex"}
+        alignItems={"center"}
+        justifyContent={"space-between"}
+      >
+        <FormLabel>Mascota ID</FormLabel>
+        {formik.errors.MascotaID && formik.touched.MascotaID ? (
+          <WarningIcon message={formik.errors.MascotaID} />
+        ) : null}
+      </Box>
+      <Select
+        onBlur={(event) => {
+          if (event.target instanceof HTMLInputElement) {
+            formik.setFieldValue("MascotaID", event.target.value);
+          }
+
+          formik.handleBlur("MascotaID")(event);
+        }}
+        placeholder="Seleccion su mascota"
+        onChange={handleMascotaChange}
+      >
         {petCatalogData?.map((mascota: ICatalogPet) => {
           return (
             <option key={mascota.MascotaID} value={mascota.MascotaID}>
@@ -76,16 +149,31 @@ export const CreateAppointmentsForm = ({
         color={"white"}
         _hover={{ background: "#e1403f" }}
         isLoading={isLoading}
+        isDisabled={!formik.dirty}
         onClick={() => {
           formik.handleSubmit();
-          setTimeout(() => {
-            refetchData();
-            onclose();
-            formik.resetForm();
-          }, 1000);
+          if (formik.isValid) {
+            setTimeout(() => {
+              refetchData();
+              onclose();
+              formik.resetForm();
+            }, 1000);
+          }
         }}
       >
         Guardar
+      </Button>
+      <Button
+        mt={4}
+        background={"red"}
+        color={"white"}
+        _hover={{ background: "#e1403f" }}
+        onClick={() => {
+          onclose();
+          formik.resetForm();
+        }}
+      >
+        Cancelar
       </Button>
     </Box>
   );

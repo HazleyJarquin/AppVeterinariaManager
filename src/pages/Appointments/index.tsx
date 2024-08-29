@@ -78,7 +78,12 @@ export const Appointments = () => {
               alignItems={"center"}
               flexDirection={"column"}
             >
-              <Drawer placement={"left"} onClose={onClose} isOpen={isOpen}>
+              <Drawer
+                closeOnOverlayClick={false}
+                placement={"left"}
+                onClose={onClose}
+                isOpen={isOpen}
+              >
                 <DrawerOverlay />
                 <DrawerContent>
                   <DrawerHeader borderBottomWidth="1px">
