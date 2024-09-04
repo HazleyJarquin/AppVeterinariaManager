@@ -1,6 +1,18 @@
+import * as yup from "yup";
 import { useFormik } from "formik";
 import { IClientsRequest } from "../interfaces";
 import { useCreateClients } from "../services/createClients.service";
+
+const validationSchema = yup.object({
+  Nombre: yup.string().required("Nombre es requerido"),
+  Apellido: yup.string().required("Apellido es requerido"),
+  Direccion: yup.string().required("Direccion es requerido"),
+  Correo: yup
+    .string()
+    .email("Ingrese un correo valido")
+    .required("Correo es requerido"),
+  Telefono: yup.string().required("Telefono es requerido"),
+});
 
 const useCreateClientsHook = () => {
   const {
@@ -32,7 +44,7 @@ const useCreateClientsHook = () => {
 
   const formik = useFormik({
     initialValues: initialValues,
-
+    validationSchema: validationSchema,
     onSubmit: (values: IClientsRequest) => {
       handleSubmit(values);
     },

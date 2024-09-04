@@ -1,16 +1,9 @@
-import {
-  Box,
-  Button,
-  FormLabel,
-  Input,
-  InputGroup,
-  InputRightElement,
-  Select,
-} from "@chakra-ui/react";
+import { Box, Button, FormLabel, Select } from "@chakra-ui/react";
 import { FormikProps } from "formik";
-
-import { ChangeEvent, useState } from "react";
+import { ChangeEvent } from "react";
 import { IUsersRequest } from "../../../../interfaces";
+import { WarningIcon } from "../../../../components/WarningIcon";
+import { ValidatorField } from "../../../../components/ValidatorField";
 
 interface Props {
   formik: FormikProps<IUsersRequest>;
@@ -24,9 +17,6 @@ export const CreateUsersForm = ({
   onclose,
   isLoading,
 }: Props) => {
-  const [show, setShow] = useState(false);
-  const handleClick = () => setShow(!show);
-
   const handleRolChange = (event: ChangeEvent<HTMLSelectElement>) => {
     const selectedRolID = event.target.value;
     formik.setFieldValue("RolID", selectedRolID);
@@ -34,66 +24,73 @@ export const CreateUsersForm = ({
 
   return (
     <Box display={"flex"} flexDirection={"column"}>
-      <FormLabel>Nombre</FormLabel>
-      <Input
-        placeholder="Nombre"
-        value={formik.values.Nombre}
-        onChange={formik.handleChange}
-        name="Nombre"
+      <ValidatorField
+        passwordField={false}
+        formik={formik}
+        formikField="Nombre"
+        labelField="Nombre"
       />
-      <FormLabel>Segundo Nombre</FormLabel>
-      <Input
-        placeholder="Segundo Nombre"
-        value={formik.values.SNombre}
-        onChange={formik.handleChange}
-        name="SNombre"
+      <ValidatorField
+        passwordField={false}
+        formik={formik}
+        formikField="SNombre"
+        labelField="Segundo Nombre"
       />
-      <FormLabel>Apellido</FormLabel>
-      <Input
-        placeholder="Apellido"
-        value={formik.values.Apellido}
-        onChange={formik.handleChange}
-        name="Apellido"
+
+      <ValidatorField
+        passwordField={false}
+        formik={formik}
+        formikField="Apellido"
+        labelField="Apellido"
       />
-      <FormLabel>Segundo Apellido</FormLabel>
-      <Input
-        placeholder="Segundo Apellido"
-        value={formik.values.SApellido}
-        onChange={formik.handleChange}
-        name="SApellido"
+      <ValidatorField
+        passwordField={false}
+        formik={formik}
+        formikField="SApellido"
+        labelField="Segundo Apellido"
       />
-      <FormLabel>Nombre de Usuario</FormLabel>
-      <Input
-        placeholder="Nombre de Usuario"
-        value={formik.values.NombreUsuario}
-        onChange={formik.handleChange}
-        name="NombreUsuario"
+      <ValidatorField
+        passwordField={false}
+        formik={formik}
+        formikField="NombreUsuario"
+        labelField="Nombre de Usuario"
       />
-      <FormLabel>Correo</FormLabel>
-      <Input
-        placeholder="Correo"
-        value={formik.values.Correo}
-        onChange={formik.handleChange}
-        name="Correo"
+      <ValidatorField
+        passwordField={false}
+        formik={formik}
+        formikField="Correo"
+        labelField="Correo"
+        placheholder="example@example.com"
       />
-      <FormLabel>Contraseña</FormLabel>
-      <InputGroup size="md">
-        <Input
-          pr="4.5rem"
-          type={show ? "text" : "password"}
-          placeholder="****"
-          value={formik.values.Password}
-          onChange={formik.handleChange}
-          name="Password"
-        />
-        <InputRightElement width="4.5rem">
-          <Button h="1.75rem" size="sm" onClick={handleClick}>
-            {show ? "Hide" : "Show"}
-          </Button>
-        </InputRightElement>
-      </InputGroup>
-      <FormLabel>Rol</FormLabel>
-      <Select placeholder="Roles" onChange={handleRolChange}>
+
+      <ValidatorField
+        formik={formik}
+        formikField="Password"
+        labelField="Password"
+        passwordField
+      />
+
+      <Box
+        display={"flex"}
+        justifyContent={"space-between"}
+        alignItems={"center"}
+      >
+        <FormLabel>Rol</FormLabel>
+        {formik.errors.RolID && formik.touched.RolID ? (
+          <WarningIcon message={formik.errors.RolID} />
+        ) : null}
+      </Box>
+      <Select
+        placeholder="Roles"
+        onChange={handleRolChange}
+        onBlur={(event) => {
+          if (event.target instanceof HTMLInputElement) {
+            formik.setFieldValue("RolID", event.target.value);
+          }
+
+          formik.handleBlur("RolID")(event);
+        }}
+      >
         <option value={1}>Veterinario</option>
         <option value={2}>Administrador</option>
       </Select>
@@ -104,16 +101,31 @@ export const CreateUsersForm = ({
         color={"white"}
         _hover={{ background: "#e1403f" }}
         isLoading={isLoading}
+        isDisabled={!formik.dirty}
         onClick={() => {
           formik.handleSubmit();
-          setTimeout(() => {
-            refetchData();
-            onclose();
-            formik.resetForm();
-          }, 1000);
+          if (formik.isValid) {
+            setTimeout(() => {
+              refetchData();
+              onclose();
+              formik.resetForm();
+            }, 1000);
+          }
         }}
       >
         Guardar
+      </Button>
+      <Button
+        mt={4}
+        background={"red"}
+        color={"white"}
+        _hover={{ background: "#e1403f" }}
+        onClick={() => {
+          onclose();
+          formik.resetForm();
+        }}
+      >
+        Cancelar
       </Button>
     </Box>
   );

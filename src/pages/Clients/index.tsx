@@ -60,7 +60,12 @@ export const Clients = () => {
     }) || [];
   return (
     <Box w={"100%"} mt={"20px"} display={"flex"} flexDirection={"column"}>
-      <Drawer placement={"left"} onClose={onClose} isOpen={isOpen}>
+      <Drawer
+        closeOnOverlayClick={false}
+        placement={"left"}
+        onClose={onClose}
+        isOpen={isOpen}
+      >
         <DrawerOverlay />
         <DrawerContent>
           <DrawerHeader borderBottomWidth="1px">Agregar Cliente</DrawerHeader>

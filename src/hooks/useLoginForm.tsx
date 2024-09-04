@@ -30,8 +30,8 @@ export const useLoginForm = () => {
   const formik = useFormik<ILoginRequest>({
     initialValues: initialValues,
     validationSchema: Yup.object({
-      Correo: Yup.string().email("Invalid email address").required("Required"),
-      Password: Yup.string().required("Required"),
+      Correo: Yup.string().email("Correo Invalido").required("Requerido"),
+      Password: Yup.string().required("Requerido"),
     }),
     onSubmit: (values) => {
       handleSubmit(values);

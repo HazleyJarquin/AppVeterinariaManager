@@ -1,11 +1,10 @@
-import { Box, Button, FormLabel, Input } from "@chakra-ui/react";
+import { Box, Button } from "@chakra-ui/react";
 import { FormikProps } from "formik";
-
 import { IClientsRequest } from "../../../../interfaces";
+import { ValidatorField } from "../../../../components/ValidatorField";
 
 interface Props {
   formik: FormikProps<IClientsRequest>;
-
   refetchData: () => void;
   onclose: () => void;
   isLoading: boolean;
@@ -18,42 +17,35 @@ export const CreateClientsForm = ({
 }: Props) => {
   return (
     <Box display={"flex"} flexDirection={"column"}>
-      <FormLabel>Nombre Cliente</FormLabel>
-      <Input
-        placeholder="Nombre"
-        value={formik.values.Nombre}
-        onChange={formik.handleChange}
-        name="Nombre"
+      <ValidatorField
+        formik={formik}
+        formikField="Nombre"
+        labelField="Nombre"
+        passwordField={false}
       />
-
-      <FormLabel>Apellido</FormLabel>
-      <Input
-        placeholder="Apellido"
-        value={formik.values.Apellido}
-        onChange={formik.handleChange}
-        name="Apellido"
+      <ValidatorField
+        formik={formik}
+        formikField="Apellido"
+        labelField="Apellido"
+        passwordField={false}
       />
-      <FormLabel>Direccion</FormLabel>
-      <Input
-        placeholder="Direccion"
-        value={formik.values.Direccion}
-        onChange={formik.handleChange}
-        name="Direccion"
+      <ValidatorField
+        formik={formik}
+        formikField="Direccion"
+        labelField="Direccion"
+        passwordField={false}
       />
-
-      <FormLabel>Correo</FormLabel>
-      <Input
-        placeholder="Correo"
-        value={formik.values.Correo}
-        onChange={formik.handleChange("Correo")}
-        name="Correo"
+      <ValidatorField
+        formik={formik}
+        formikField="Correo"
+        labelField="Correo"
+        passwordField={false}
       />
-      <FormLabel>Celular</FormLabel>
-      <Input
-        placeholder="Cel"
-        value={formik.values.Telefono}
-        onChange={formik.handleChange("Telefono")}
-        name="Celular"
+      <ValidatorField
+        formik={formik}
+        formikField="Telefono"
+        labelField="Celular"
+        passwordField={false}
       />
 
       <Button
@@ -62,16 +54,31 @@ export const CreateClientsForm = ({
         color={"white"}
         _hover={{ background: "#e1403f" }}
         isLoading={isLoading}
+        isDisabled={!formik.dirty}
         onClick={() => {
           formik.handleSubmit();
-          setTimeout(() => {
-            refetchData();
-            onclose();
-            formik.resetForm();
-          }, 1000);
+          if (formik.isValid) {
+            setTimeout(() => {
+              refetchData();
+              onclose();
+              formik.resetForm();
+            }, 1000);
+          }
         }}
       >
         Guardar
+      </Button>
+      <Button
+        mt={4}
+        background={"red"}
+        color={"white"}
+        _hover={{ background: "#e1403f" }}
+        onClick={() => {
+          onclose();
+          formik.resetForm();
+        }}
+      >
+        Cancelar
       </Button>
     </Box>
   );

@@ -116,7 +116,7 @@ const Login = () => {
       alignItems={"center"}
     >
       <Box
-        w={"25%"}
+        w={{ base: "90%", sm: "50%", md: "50%", lg: "35%", xl: "25%" }}
         rounded={"md"}
         border={"1px solid #ffffff"}
         color={"#000"}

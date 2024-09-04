@@ -3,8 +3,13 @@ import { useFormik } from "formik";
 import { useCreateAppointments } from "../services/createAppointments.service";
 import { IAppointmentsRequest } from "../interfaces/IAppointmentsRequest.interface";
 
+const today = new Date();
+today.setHours(0, 0, 0, 0);
+
 const validationSchema = Yup.object({
-  FechaHora: Yup.string().required("La fecha es requerida"),
+  FechaHora: Yup.date()
+    .required("La fecha es requerida")
+    .min(today, "La fecha no puede ser anterior a hoy"),
   Motivo: Yup.string().required("El motivo es requerido"),
   MascotaID: Yup.number().required("La mascota es requerida"),
   VeterinarioID: Yup.number().required("El veterinario es requerido"),

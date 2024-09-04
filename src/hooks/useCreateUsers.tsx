@@ -1,6 +1,21 @@
+import * as Yup from "yup";
 import { useFormik } from "formik";
 import { useCreateUsers } from "../services/createUsers.service";
 import { IUsersRequest } from "../interfaces";
+
+const validationSchema = Yup.object({
+  NombreUsuario: Yup.string().required("Nombre de usuario requerido"),
+  Nombre: Yup.string().required("Nombre requerido"),
+  Apellido: Yup.string().required("Apellido requerido"),
+  Correo: Yup.string().email("Correo invalido").required("Correo requerido"),
+  Password: Yup.string()
+    .matches(
+      /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/,
+      "La contraseña debe tener al menos 8 caracteres, una letra mayúscula, una letra minúscula, un número y un carácter especial."
+    )
+    .required("La contraseña es obligatoria"),
+  RolID: Yup.number().required("Rol requerido"),
+});
 
 const useCreateUsersHook = () => {
   const {
@@ -38,7 +53,7 @@ const useCreateUsersHook = () => {
 
   const formik = useFormik({
     initialValues: initialValues,
-
+    validationSchema: validationSchema,
     onSubmit: (values: IUsersRequest) => {
       handleSubmit(values);
     },
