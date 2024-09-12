@@ -118,7 +118,7 @@ export const CreateAppointmentsForm = ({
         alignItems={"center"}
         justifyContent={"space-between"}
       >
-        <FormLabel>Mascota ID</FormLabel>
+        <FormLabel>Mascota</FormLabel>
         {formik.errors.MascotaID && formik.touched.MascotaID ? (
           <WarningIcon message={formik.errors.MascotaID} />
         ) : null}

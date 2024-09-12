@@ -51,7 +51,7 @@ const Login = () => {
       setIsLocked(false);
     } else if (isError && !isLocked) {
       const errorMessage =
-        `${error?.response?.data?.Message}, tienes ${attemptsNumbers} intento(s)` ||
+        `correo o password incorrectos, tienes ${attemptsNumbers} intento(s)` ||
         "An error occurred";
 
       setAttempts((prevAttempts) => {
@@ -74,6 +74,19 @@ const Login = () => {
       });
     }
   }, [isSuccess, data, isError, error, setToken, navigate, toast, isLocked]);
+
+  useEffect(() => {
+    if (isLocked) {
+      setAttemptsNumbers(2);
+      const interval = setInterval(() => {
+        setAttempts(0);
+
+        setIsLocked(false);
+      }, 5000);
+
+      return () => clearInterval(interval);
+    }
+  }, [isLocked, setAttempts, setIsLocked]);
 
   if (isLocked) {
     return (
@@ -98,9 +111,7 @@ const Login = () => {
           alignItems={"center"}
         >
           <Heading color={"#FD7E14"}>Usuario bloqueado</Heading>
-          <Box mt={4}>
-            Habla con un administrador para desbloquear tu cuenta.
-          </Box>
+          <Box mt={4}>Regrese en 5 segundos para intentar de nuevo</Box>
         </Box>
       </Box>
     );
