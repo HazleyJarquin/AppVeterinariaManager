@@ -9,7 +9,6 @@ import {
   InputLeftElement,
   InputRightElement,
   useColorMode,
-  useToast,
 } from "@chakra-ui/react";
 import { useLoginForm } from "../../hooks/useLoginForm";
 import { useEffect, useState } from "react";
@@ -27,10 +26,10 @@ const Login = () => {
   const { attempts, setAttempts, isLocked, setIsLocked } = useAttempts();
   const { colorMode } = useColorMode();
   const [lockMessage, setLockMessage] = useState("");
-  const { formik, data, isLoading, isSuccess } = useLoginForm();
+  const { formik, data, isLoading } = useLoginForm();
   const { setToken } = useAuthToken();
   const navigate = useNavigate();
-  const toast = useToast();
+  const [attemptsMessage, setAttemptsMessage] = useState("");
 
   const handleClick = () => {
     setShow(!show);
@@ -58,50 +57,25 @@ const Login = () => {
     }
   }, [data, setToken, navigate, setAttempts]);
 
-  const handleLogin = (e: React.FormEvent) => {
+  const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
-    formik.handleSubmit();
+
+    await formik.handleSubmit();
 
     if (!data?.Token) {
       const remainingAttempts = 2 - attempts;
+
       if (attempts >= 2) {
         setIsLocked(true);
+        setAttemptsMessage("");
       } else {
         setAttempts(attempts + 1);
-        toast({
-          title: "Error",
-          description: `Usuario o password incorrectos, tienes ${remainingAttempts} intento(s) restantes.`,
-          status: "error",
-          duration: 1000,
-          isClosable: true,
-        });
+        setAttemptsMessage(
+          `Usuario o password incorrectos, tienes ${remainingAttempts} intento(s) restantes.`
+        );
       }
     }
   };
-
-  // const handleLogin = (e: React.FormEvent) => {
-  //   e.preventDefault();
-  //   formik.handleSubmit();
-  //   if (isSuccess && data?.Token) {
-  //     setToken(data?.Token);
-  //     navigate("/home");
-  //     setAttempts(0);
-  //   } else {
-  //     const remainingAttempts = 2 - attempts;
-  //     if (attempts >= 2) {
-  //       setIsLocked(true);
-  //     } else {
-  //       setAttempts(attempts + 1);
-  //       toast({
-  //         title: "Error",
-  //         description: `Usuario o password incorrectos, tienes ${remainingAttempts} intento(s) restantes.`,
-  //         status: "error",
-  //         duration: 1000,
-  //         isClosable: true,
-  //       });
-  //     }
-  //   }
-  // };
 
   const onKeyPress = (event: React.KeyboardEvent<HTMLInputElement>) => {
     if (event.key === "Enter") {
@@ -246,7 +220,13 @@ const Login = () => {
               </InputRightElement>
             </InputGroup>
           </Box>
-
+          {attemptsMessage && (
+            <div
+              style={{ color: "red", fontSize: "15px", marginBottom: "10px" }}
+            >
+              {attemptsMessage}
+            </div>
+          )}
           <Button
             background={"#FD7E14"}
             color={"white"}

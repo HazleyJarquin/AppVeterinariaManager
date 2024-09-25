@@ -43,7 +43,8 @@ export const ValidatorField = ({
     if (formikField === "NombreUsuario") {
       return usersData?.some(
         (user: { NombreUsuario: string }) =>
-          user.NombreUsuario === formik.values.NombreUsuario
+          user.NombreUsuario.toLowerCase() ===
+          formik.values.NombreUsuario.toLowerCase()
       )
         ? "El nombre de usuario ya existe"
         : null;
