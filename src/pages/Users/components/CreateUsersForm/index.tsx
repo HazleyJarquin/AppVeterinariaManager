@@ -4,6 +4,7 @@ import { ChangeEvent } from "react";
 import { IUsersRequest } from "../../../../interfaces";
 import { WarningIcon } from "../../../../components/WarningIcon";
 import { ValidatorField } from "../../../../components/ValidatorField";
+import { useGetUserList } from "../../../../services/getAllUser.service";
 
 interface Props {
   formik: FormikProps<IUsersRequest>;
@@ -21,6 +22,8 @@ export const CreateUsersForm = ({
     const selectedRolID = event.target.value;
     formik.setFieldValue("RolID", selectedRolID);
   };
+
+  const { data: usersData } = useGetUserList();
 
   return (
     <Box display={"flex"} flexDirection={"column"}>
@@ -54,13 +57,17 @@ export const CreateUsersForm = ({
         formik={formik}
         formikField="NombreUsuario"
         labelField="Nombre de Usuario"
+        usersData={usersData}
       />
+
       <ValidatorField
         passwordField={false}
         formik={formik}
         formikField="Correo"
         labelField="Correo"
         placheholder="example@example.com"
+        isClientForm={false}
+        usersData={usersData}
       />
 
       <ValidatorField
@@ -101,7 +108,14 @@ export const CreateUsersForm = ({
         color={"white"}
         _hover={{ background: "#e1403f" }}
         isLoading={isLoading}
-        isDisabled={!formik.dirty}
+        isDisabled={
+          !formik.dirty ||
+          usersData?.some(
+            (user: { NombreUsuario: string; Correo: string }) =>
+              user.NombreUsuario === formik.values.NombreUsuario ||
+              user.Correo === formik.values.Correo
+          )
+        }
         onClick={() => {
           formik.handleSubmit();
           if (formik.isValid) {

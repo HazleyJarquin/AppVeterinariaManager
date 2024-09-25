@@ -16,19 +16,18 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { WarningIcon } from "../../components/WarningIcon";
 import { useAuthToken } from "../../store/useAuthToken.store";
-import { EmailIcon, LockIcon } from "@chakra-ui/icons";
-import { EyeIcon, EyeOffIcon, PawPrint } from "lucide-react";
+import { LockIcon } from "@chakra-ui/icons";
+import { EyeIcon, EyeOffIcon, PawPrint, UserIcon } from "lucide-react";
 import { useAttempts } from "../../store/useAttempts.store";
-// import { DarkModeButtons } from "../../components/DarkModeButtons";
 
 const MAX_ATTEMPTS = 3;
 
 const Login = () => {
   const [show, setShow] = useState(false);
   const { attempts, setAttempts, isLocked, setIsLocked } = useAttempts();
-  const [attemptsNumbers, setAttemptsNumbers] = useState(2);
   const { colorMode } = useColorMode();
-  const { formik, data, isError, isLoading, isSuccess, error } = useLoginForm();
+  const [lockMessage, setLockMessage] = useState("");
+  const { formik, data, isLoading, isSuccess } = useLoginForm();
   const { setToken } = useAuthToken();
   const navigate = useNavigate();
   const toast = useToast();
@@ -37,85 +36,78 @@ const Login = () => {
     setShow(!show);
   };
 
-  const onKeyPress = (event: React.KeyboardEvent<HTMLInputElement>) => {
-    if (event.key === "Enter") {
-      formik.handleSubmit();
+  useEffect(() => {
+    let timer: NodeJS.Timeout;
+
+    if (isLocked) {
+      setLockMessage("Pantalla bloqueada por 5 segundos...");
+      timer = setTimeout(() => {
+        setIsLocked(false);
+        setAttempts(0);
+      }, 5000);
+    }
+
+    return () => clearTimeout(timer);
+  }, [isLocked]);
+
+  useEffect(() => {
+    if (data?.Token) {
+      setToken(data.Token);
+      navigate("/home");
+      setAttempts(0);
+    }
+  }, [data, setToken, navigate, setAttempts]);
+
+  const handleLogin = (e: React.FormEvent) => {
+    e.preventDefault();
+    formik.handleSubmit();
+
+    if (!data?.Token) {
+      const remainingAttempts = 2 - attempts;
+      if (attempts >= 2) {
+        setIsLocked(true);
+      } else {
+        setAttempts(attempts + 1);
+        toast({
+          title: "Error",
+          description: `Usuario o password incorrectos, tienes ${remainingAttempts} intento(s) restantes.`,
+          status: "error",
+          duration: 1000,
+          isClosable: true,
+        });
+      }
     }
   };
 
-  useEffect(() => {
-    if (isSuccess && data?.Token) {
-      setToken(data?.Token);
-      navigate("/home");
-      setAttempts(0);
-      setIsLocked(false);
-    } else if (isError && !isLocked) {
-      const errorMessage =
-        `correo o password incorrectos, tienes ${attemptsNumbers} intento(s)` ||
-        "An error occurred";
+  // const handleLogin = (e: React.FormEvent) => {
+  //   e.preventDefault();
+  //   formik.handleSubmit();
+  //   if (isSuccess && data?.Token) {
+  //     setToken(data?.Token);
+  //     navigate("/home");
+  //     setAttempts(0);
+  //   } else {
+  //     const remainingAttempts = 2 - attempts;
+  //     if (attempts >= 2) {
+  //       setIsLocked(true);
+  //     } else {
+  //       setAttempts(attempts + 1);
+  //       toast({
+  //         title: "Error",
+  //         description: `Usuario o password incorrectos, tienes ${remainingAttempts} intento(s) restantes.`,
+  //         status: "error",
+  //         duration: 1000,
+  //         isClosable: true,
+  //       });
+  //     }
+  //   }
+  // };
 
-      setAttempts((prevAttempts) => {
-        const newAttempts = prevAttempts + 1;
-        setAttemptsNumbers(attemptsNumbers - 1);
-
-        if (newAttempts >= MAX_ATTEMPTS) {
-          setIsLocked(true);
-        }
-
-        return newAttempts;
-      });
-
-      toast({
-        title: "Error",
-        description: errorMessage,
-        status: "error",
-        duration: 5000,
-        isClosable: true,
-      });
+  const onKeyPress = (event: React.KeyboardEvent<HTMLInputElement>) => {
+    if (event.key === "Enter") {
+      handleLogin(event);
     }
-  }, [isSuccess, data, isError, error, setToken, navigate, toast, isLocked]);
-
-  useEffect(() => {
-    if (isLocked) {
-      setAttemptsNumbers(2);
-      const interval = setInterval(() => {
-        setAttempts(0);
-
-        setIsLocked(false);
-      }, 5000);
-
-      return () => clearInterval(interval);
-    }
-  }, [isLocked, setAttempts, setIsLocked]);
-
-  if (isLocked) {
-    return (
-      <Box
-        w={"100%"}
-        height={"100vh"}
-        display={"flex"}
-        backgroundColor={"#f3f4f6"}
-        justifyContent={"center"}
-        alignItems={"center"}
-      >
-        <Box
-          w={"25%"}
-          rounded={"md"}
-          border={"1px solid #ffffff"}
-          color={"#000"}
-          background={"#ffffff"}
-          p={10}
-          display={"flex"}
-          flexDirection={"column"}
-          justifyContent={"center"}
-          alignItems={"center"}
-        >
-          <Heading color={"#FD7E14"}>Usuario bloqueado</Heading>
-          <Box mt={4}>Regrese en 5 segundos para intentar de nuevo</Box>
-        </Box>
-      </Box>
-    );
-  }
+  };
 
   return (
     <Box
@@ -126,121 +118,147 @@ const Login = () => {
       justifyContent={"center"}
       alignItems={"center"}
     >
-      <Box
-        w={{ base: "90%", sm: "50%", md: "50%", lg: "35%", xl: "25%" }}
-        rounded={"md"}
-        border={"1px solid #ffffff"}
-        color={"#000"}
-        background={"#ffffff"}
-        p={10}
-        display={"flex"}
-        flexDirection={"column"}
-        justifyContent={"center"}
-        gap={"20px"}
-      >
-        <Box display={"flex"} gap={"0.2rem"} alignItems={"center"}>
-          <PawPrint color="#FD7E14" size={"30px"} />
-          <Heading>
-            <Highlight
-              query="Cat"
-              styles={{ color: "#ffffff", background: "#FD7E14" }}
-            >
-              DogCat
-            </Highlight>
-          </Heading>
-          {/* <DarkModeButtons /> */}
-        </Box>
-
-        <Box>
-          <Box width={"100%"} display={"flex"} gap={2}>
-            <FormLabel>Correo</FormLabel>
-            {formik.errors.Correo && formik.touched.Correo ? (
-              <WarningIcon message={formik.errors.Correo} />
-            ) : null}
-          </Box>
-          <InputGroup>
-            <InputLeftElement pointerEvents="none">
-              <EmailIcon />
-            </InputLeftElement>
-            <Input
-              variant={"flushed"}
-              placeholder="example@email.com"
-              _placeholder={{
-                color: colorMode === "light" ? "light" : "black",
-                opacity: "0.5",
-              }}
-              onBlur={(event) => {
-                if (event.target instanceof HTMLInputElement) {
-                  formik.setFieldValue("Correo", event.target.value);
-                }
-
-                formik.handleBlur("Correo")(event);
-              }}
-              onChange={(event) => {
-                formik.setFieldValue("Correo", event.target.value);
-                formik.validateField("Correo");
-              }}
-            />
-          </InputGroup>
-        </Box>
-
-        <Box>
-          <Box width={"100%"} display={"flex"} gap={2}>
-            <FormLabel>Password</FormLabel>
-            {formik.errors.Password && formik.touched.Password ? (
-              <WarningIcon message={formik.errors.Password} />
-            ) : null}
-          </Box>
-          <InputGroup>
-            <InputLeftElement pointerEvents="none">
-              <LockIcon />
-            </InputLeftElement>
-            <Input
-              _placeholder={{
-                color: colorMode === "light" ? "light" : "black",
-                opacity: "0.5",
-              }}
-              placeholder="******"
-              variant={"flushed"}
-              type={show ? "text" : "password"}
-              onKeyDown={onKeyPress}
-              onBlur={(event) => {
-                if (event.target instanceof HTMLInputElement) {
-                  formik.setFieldValue("Password", event.target.value);
-                }
-
-                formik.handleBlur("Password")(event);
-              }}
-              onChange={(event) => {
-                formik.setFieldValue("Password", event.target.value);
-                formik.validateField("Password");
-              }}
-            />
-            <InputRightElement width="4.5rem">
-              <Button
-                background={"transparent"}
-                _hover={{ background: "transparent" }}
-                h="1.75rem"
-                size="sm"
-                onClick={handleClick}
-              >
-                {show ? <EyeOffIcon /> : <EyeIcon />}
-              </Button>
-            </InputRightElement>
-          </InputGroup>
-        </Box>
-
-        <Button
-          background={"#FD7E14"}
-          color={"white"}
-          _hover={{ background: "#e1403f" }}
-          onClick={() => formik.handleSubmit()}
-          isLoading={isLoading}
-          isDisabled={attempts >= MAX_ATTEMPTS}
+      {isLocked ? (
+        <Box
+          w={"100%"}
+          height={"100vh"}
+          display={"flex"}
+          backgroundColor={"#f3f4f6"}
+          justifyContent={"center"}
+          alignItems={"center"}
         >
-          Iniciar Sesión
-        </Button>
-      </Box>
+          <Box
+            w={"25%"}
+            rounded={"md"}
+            border={"1px solid #ffffff"}
+            color={"#000"}
+            background={"#ffffff"}
+            p={10}
+            display={"flex"}
+            flexDirection={"column"}
+            justifyContent={"center"}
+            alignItems={"center"}
+          >
+            <Heading color={"#FD7E14"}>Usuario bloqueado</Heading>
+            <Box mt={4}>{lockMessage}</Box>
+          </Box>
+        </Box>
+      ) : (
+        <Box
+          w={{ base: "90%", sm: "50%", md: "50%", lg: "35%", xl: "25%" }}
+          rounded={"md"}
+          border={"1px solid #ffffff"}
+          color={"#000"}
+          background={"#ffffff"}
+          p={10}
+          display={"flex"}
+          flexDirection={"column"}
+          justifyContent={"center"}
+          gap={"20px"}
+        >
+          <Box display={"flex"} gap={"0.2rem"} alignItems={"center"}>
+            <PawPrint color="#FD7E14" size={"30px"} />
+            <Heading>
+              <Highlight
+                query="Cat"
+                styles={{ color: "#ffffff", background: "#FD7E14" }}
+              >
+                DogCat
+              </Highlight>
+            </Heading>
+          </Box>
+
+          <Box>
+            <Box width={"100%"} display={"flex"} gap={2}>
+              <FormLabel>Usuario</FormLabel>
+              {formik.errors.User && formik.touched.User ? (
+                <WarningIcon message={formik.errors.User} />
+              ) : null}
+            </Box>
+            <InputGroup>
+              <InputLeftElement pointerEvents="none">
+                <UserIcon />
+              </InputLeftElement>
+              <Input
+                variant={"flushed"}
+                placeholder="usuario"
+                _placeholder={{
+                  color: colorMode === "light" ? "light" : "black",
+                  opacity: "0.5",
+                }}
+                onBlur={(event) => {
+                  if (event.target instanceof HTMLInputElement) {
+                    formik.setFieldValue("User", event.target.value);
+                  }
+
+                  formik.handleBlur("User")(event);
+                }}
+                onChange={(event) => {
+                  formik.setFieldValue("User", event.target.value);
+                  formik.validateField("User");
+                }}
+              />
+            </InputGroup>
+          </Box>
+
+          <Box>
+            <Box width={"100%"} display={"flex"} gap={2}>
+              <FormLabel>Password</FormLabel>
+              {formik.errors.Password && formik.touched.Password ? (
+                <WarningIcon message={formik.errors.Password} />
+              ) : null}
+            </Box>
+            <InputGroup>
+              <InputLeftElement pointerEvents="none">
+                <LockIcon />
+              </InputLeftElement>
+              <Input
+                _placeholder={{
+                  color: colorMode === "light" ? "light" : "black",
+                  opacity: "0.5",
+                }}
+                placeholder="******"
+                variant={"flushed"}
+                type={show ? "text" : "password"}
+                onKeyDown={onKeyPress}
+                onBlur={(event) => {
+                  if (event.target instanceof HTMLInputElement) {
+                    formik.setFieldValue("Password", event.target.value);
+                  }
+
+                  formik.handleBlur("Password")(event);
+                }}
+                onChange={(event) => {
+                  formik.setFieldValue("Password", event.target.value);
+                  formik.validateField("Password");
+                }}
+              />
+              <InputRightElement width="4.5rem">
+                <Button
+                  background={"transparent"}
+                  _hover={{ background: "transparent" }}
+                  h="1.75rem"
+                  size="sm"
+                  onClick={handleClick}
+                >
+                  {show ? <EyeOffIcon /> : <EyeIcon />}
+                </Button>
+              </InputRightElement>
+            </InputGroup>
+          </Box>
+
+          <Button
+            background={"#FD7E14"}
+            color={"white"}
+            _hover={{ background: "#e1403f" }}
+            onClick={handleLogin}
+            isLoading={isLoading}
+            isDisabled={attempts >= MAX_ATTEMPTS}
+          >
+            Iniciar Sesión
+          </Button>
+        </Box>
+      )}
     </Box>
   );
 };

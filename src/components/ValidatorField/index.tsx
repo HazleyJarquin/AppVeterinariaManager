@@ -16,6 +16,9 @@ interface Props {
   labelField: string;
   placheholder?: string;
   passwordField: boolean;
+  isClientForm?: boolean;
+  usersData?: any;
+  clientsData?: any;
 }
 
 export const ValidatorField = ({
@@ -24,13 +27,43 @@ export const ValidatorField = ({
   labelField,
   placheholder = labelField,
   passwordField = false,
+  isClientForm = false,
+  usersData,
+  clientsData,
 }: Props) => {
   const [show, setShow] = useState(false);
+
   const handleClick = () => setShow(!show);
   const errorMessage =
     typeof formik.errors[formikField] === "string"
       ? formik.errors[formikField]
       : "";
+
+  const getWarningMessage = () => {
+    if (formikField === "NombreUsuario") {
+      return usersData?.some(
+        (user: { NombreUsuario: string }) =>
+          user.NombreUsuario === formik.values.NombreUsuario
+      )
+        ? "El nombre de usuario ya existe"
+        : null;
+    } else if (formikField === "Correo") {
+      return isClientForm
+        ? clientsData?.some(
+            (user: { Correo: string }) => user.Correo === formik.values.Correo
+          )
+          ? "El correo ya existe"
+          : null
+        : usersData?.some(
+            (user: { Correo: string }) => user.Correo === formik.values.Correo
+          )
+        ? "El correo ya existe"
+        : null;
+    }
+    return null;
+  };
+
+  const warningMessage = getWarningMessage();
 
   return (
     <>
@@ -43,6 +76,8 @@ export const ValidatorField = ({
         {formik.errors[formikField] && formik.touched[formikField] ? (
           <WarningIcon message={errorMessage} />
         ) : null}
+
+        {warningMessage && <WarningIcon message={warningMessage} />}
       </Box>
       {passwordField ? (
         <InputGroup size="md">

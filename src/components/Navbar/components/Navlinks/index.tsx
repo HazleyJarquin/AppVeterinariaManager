@@ -12,7 +12,6 @@ export const Navlinks = ({ navigate }: Props) => {
       id: 1,
       name: "Inicio",
       path: "/home",
-      restricted: "Veterinario",
     },
     {
       id: 2,

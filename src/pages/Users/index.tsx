@@ -25,7 +25,7 @@ export const Users = () => {
       accessor: "id",
     },
     {
-      Header: "UserName",
+      Header: "Username",
       accessor: "username",
     },
     {

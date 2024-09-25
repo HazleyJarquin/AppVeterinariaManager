@@ -4,14 +4,34 @@ import { IClientsRequest } from "../interfaces";
 import { useCreateClients } from "../services/createClients.service";
 
 const validationSchema = yup.object({
-  Nombre: yup.string().required("Nombre es requerido"),
-  Apellido: yup.string().required("Apellido es requerido"),
+  Nombre: yup
+    .string()
+    .required("El nombre es requerido")
+    .min(2, "El nombre debe tener al menos 2 caracteres")
+    .max(30, "El nombre no puede tener más de 30 caracteres")
+    .matches(
+      /^[A-Za-zÁÉÍÓÚáéíóúñÑ\s]+$/,
+      "El nombre solo puede contener letras y espacios"
+    ),
+
+  Apellido: yup
+    .string()
+    .required("El apellido es requerido")
+    .min(2, "El apellido debe tener al menos 2 caracteres")
+    .max(30, "El apellido no puede tener más de 30 caracteres")
+    .matches(
+      /^[A-Za-zÁÉÍÓÚáéíóúñÑ\s]+$/,
+      "El apellido solo puede contener letras y espacios"
+    ),
   Direccion: yup.string().required("Direccion es requerido"),
   Correo: yup
     .string()
     .email("Ingrese un correo valido")
     .required("Correo es requerido"),
-  Telefono: yup.string().required("Telefono es requerido"),
+  Telefono: yup
+    .number()
+    .typeError("El teléfono debe ser un número")
+    .required("Teléfono es requerido"),
 });
 
 const useCreateClientsHook = () => {

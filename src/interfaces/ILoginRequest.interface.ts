@@ -1,4 +1,4 @@
 export interface ILoginRequest {
-  Correo: string;
+  User: string;
   Password: string;
 }

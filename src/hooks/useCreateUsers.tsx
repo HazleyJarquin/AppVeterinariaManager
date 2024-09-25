@@ -5,8 +5,23 @@ import { IUsersRequest } from "../interfaces";
 
 const validationSchema = Yup.object({
   NombreUsuario: Yup.string().required("Nombre de usuario requerido"),
-  Nombre: Yup.string().required("Nombre requerido"),
-  Apellido: Yup.string().required("Apellido requerido"),
+  Nombre: Yup.string()
+    .required("El nombre es requerido")
+    .min(2, "El nombre debe tener al menos 2 caracteres")
+    .max(30, "El nombre no puede tener más de 30 caracteres")
+    .matches(
+      /^[A-Za-zÁÉÍÓÚáéíóúñÑ\s]+$/,
+      "El nombre solo puede contener letras y espacios"
+    ),
+
+  Apellido: Yup.string()
+    .required("El apellido es requerido")
+    .min(2, "El apellido debe tener al menos 2 caracteres")
+    .max(30, "El apellido no puede tener más de 30 caracteres")
+    .matches(
+      /^[A-Za-zÁÉÍÓÚáéíóúñÑ\s]+$/,
+      "El apellido solo puede contener letras y espacios"
+    ),
   Correo: Yup.string().email("Correo invalido").required("Correo requerido"),
   Password: Yup.string()
     .matches(

@@ -14,13 +14,13 @@ export const useLoginForm = () => {
   } = useLoginMutation();
 
   const initialValues: ILoginRequest = {
-    Correo: "",
+    User: "",
     Password: "",
   };
 
   const handleSubmit = (values: ILoginRequest) => {
     const loginData = {
-      Correo: values.Correo,
+      User: values.User,
       Password: values.Password,
     };
 
@@ -30,7 +30,7 @@ export const useLoginForm = () => {
   const formik = useFormik<ILoginRequest>({
     initialValues: initialValues,
     validationSchema: Yup.object({
-      Correo: Yup.string().email("Correo Invalido").required("Requerido"),
+      User: Yup.string().required("Requerido"),
       Password: Yup.string().required("Requerido"),
     }),
     onSubmit: (values) => {

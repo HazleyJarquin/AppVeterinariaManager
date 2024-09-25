@@ -2,6 +2,7 @@ import { Box, Button } from "@chakra-ui/react";
 import { FormikProps } from "formik";
 import { IClientsRequest } from "../../../../interfaces";
 import { ValidatorField } from "../../../../components/ValidatorField";
+import { useGetClientList } from "../../../../services/getAllClients.service";
 
 interface Props {
   formik: FormikProps<IClientsRequest>;
@@ -15,6 +16,7 @@ export const CreateClientsForm = ({
   onclose,
   isLoading,
 }: Props) => {
+  const { data: clientsData } = useGetClientList();
   return (
     <Box display={"flex"} flexDirection={"column"}>
       <ValidatorField
@@ -40,6 +42,8 @@ export const CreateClientsForm = ({
         formikField="Correo"
         labelField="Correo"
         passwordField={false}
+        isClientForm
+        clientsData={clientsData}
       />
       <ValidatorField
         formik={formik}
@@ -54,7 +58,12 @@ export const CreateClientsForm = ({
         color={"white"}
         _hover={{ background: "#e1403f" }}
         isLoading={isLoading}
-        isDisabled={!formik.dirty}
+        isDisabled={
+          !formik.dirty ||
+          clientsData?.some(
+            (user: { Correo: string }) => user.Correo === formik.values.Correo
+          )
+        }
         onClick={() => {
           formik.handleSubmit();
           if (formik.isValid) {

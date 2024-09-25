@@ -31,10 +31,6 @@ export const Clients = () => {
       accessor: "id",
     },
     {
-      Header: "UserName",
-      accessor: "username",
-    },
-    {
       Header: "Nombre",
       accessor: "nombre",
     },
@@ -52,7 +48,6 @@ export const Clients = () => {
     clientData?.map((user: IClientsResponse) => {
       return {
         id: user.ClienteID,
-        username: user.Nombre,
         nombre: `${user.Nombre} ${user.Apellido}`,
         dir: user.Direccion,
         correo: user.Correo,
